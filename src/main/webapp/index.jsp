@@ -1,7 +1,8 @@
 <html>
 <body>
-<h2>Hello this is folarin favour olaoluwapo - second push!</h2>
-<p>This is my faulty web application that i am going to roll back to a stable one!</p>
-<invalid>Broken tag to simulate failure</invalid> <!-- This will cause Tomcat to fail parsing -->
+<h2>Hello this is <i>folarin favour olaoluwapo</i>, i am a cloud engineer!</h2>
+<p>This is my code deploy web application working!</p>
+<p>This is my faulty web application that will fail deployment!</p>
+<% invalidJavaCode; // This causes a JSP compilation error %>
 </body>
 </html>
