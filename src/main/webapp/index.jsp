@@ -1,7 +1,6 @@
 <html>
 <body>
 <h2>Hello this is <i>folarin favour olaoluwapo</i>, i am a cloud engineer!</h2>
-<p>This is my code deploy web application working!</p>
-//initial code //
+<p>This is my codepipeline web application working!</p>
 </body>
 </html>
