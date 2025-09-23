@@ -1,0 +1,619 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:us-east-1:938586302001:generatedTemplate/6e4aab10-88fc-48e2-8106-a1dfd65855e5"
+Parameters:
+  KeyName:
+    Default: "favour-devops"
+    Type: "String"
+    Description: "Name of an existing EC2 KeyPair to enable SSH access"
+Resources:
+  CodeArtifactDomainDomainfavour:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeArtifact::Domain"
+    DeletionPolicy: "Delete"
+    Properties:
+      DomainName: "favour"
+  EC2KeyPairFavourdevops:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::KeyPair"
+    DeletionPolicy: "Delete"
+    Properties:
+      KeyName: "favour-devops"
+      KeyType: "rsa"
+      PublicKeyMaterial: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDAxXlV/yzaN32JUCEV8m/6+WlsuZeTfBk3WbgKUlbWpPBPkTQ0WL7O4hfNnWB6JqS1aYi6wb/G05uwHsVcmRZeAOpjp/Q5qon8ZIvY0dKouNrHTXKtnLu5w/ouSHeM86MOvi69KaK7zT/v7QYa1gkxU55T5IXRfJIIeHydkzC8erxkaUpzuk2DZso9dppETIvzJg7H9uPkWgMD+C/Mbo0/+Eh0W3umS6cNe+L4ppbBiuOKmSZn3t+BLYMXYk7Ka4AOl4Izb16H2Oo8sYDc5xE89Rw2uQSnUSzpkabRjGGNCeceT3rLhqDp3JVVj6PGpqn13GqudXAwNWf4XdRtlmH\
+        \ favour-devops\n"
+      Tags: []
+  EC2Subnet:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      MapPublicIpOnLaunch: true
+      EnableDns64: false
+      VpcId:
+        Ref: "EC2VPC"
+      AvailabilityZoneId: "use1-az4"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "172.31.16.0/20"
+      Ipv6Native: false
+      Tags: []
+  EC2SecurityGroup:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      GroupDescription: "launch-wizard-3 created 2025-09-22T14:19:39.960Z"
+      GroupName: "launch-wizard-3"
+      VpcId:
+        Ref: "EC2VPC"
+      SecurityGroupIngress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "tcp"
+        FromPort: 22
+        ToPort: 22
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+  CodeArtifactRepositoryRepositoryfavourmavencentralstore:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeArtifact::Repository"
+    DeletionPolicy: "Delete"
+    Properties:
+      RepositoryName: "maven-central-store"
+      Description: "Provides Maven artifacts from Maven Central Repository."
+      ExternalConnections:
+      - "public:maven-central"
+      DomainName:
+        Fn::GetAtt:
+        - "CodeArtifactDomainDomainfavour"
+        - "Name"
+  S3BucketFavourdevopscicdyourname:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "favour-devops-cicd-yourname"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
+  IAMRoleAWSCodePipelineServiceRoleuseast1nextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::938586302001:policy/service-role/AWSCodePipelineServiceRole-us-east-1-nextwork-devops-cicd"
+      - "arn:aws:iam::938586302001:policy/service-role/CodePipeline-CodeDeploy-us-east-1-nextwork-devops-cicd"
+      - "arn:aws:iam::aws:policy/AWSCodeDeployFullAccess"
+      - "arn:aws:iam::938586302001:policy/service-role/CodePipeline-CodeConnections-us-east-1-nextwork-devops-cicd"
+      - "arn:aws:iam::938586302001:policy/service-role/CodePipeline-CodeBuild-us-east-1-nextwork-devops-cicd"
+      MaxSessionDuration: 3600
+      RoleName: "AWSCodePipelineServiceRole-us-east-1-nextwork-devops-cicd"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "938586302001"
+          Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "codepipeline.amazonaws.com"
+          Sid: "CodePipelineTrustPolicy"
+  CodeStarConnectionsConnectionConnection020c65f43293462784f117cf8685eb48:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeStarConnections::Connection"
+    DeletionPolicy: "Delete"
+    Properties:
+      ConnectionName: "githubcodebuild"
+      HostArn: "arn:aws:codestar-connections:us-west-2:000000000000:host/00000000-0000-0000-0000-000000000000"
+      ProviderType: "GitHub"
+      Tags: []
+  IAMRoleAWSCodeDeployRole:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+      MaxSessionDuration: 3600
+      RoleName: "AWSCodeDeployRole"
+      Description: "Allows CodeDeploy to call AWS services such as Auto Scaling on\
+        \ your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "codedeploy.amazonaws.com"
+          Sid: ""
+  EC2VolumeAttachment:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VolumeAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      InstanceId: "i-07e84debf5f797082"
+      VolumeId: "vol-0471eef0e124c66ac"
+      Device: "/dev/xvda"
+  IAMManagedPolicyPolicyserviceroleAWSCodePipelineServiceRoleuseast1nextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "AWSCodePipelineServiceRole-us-east-1-nextwork-devops-cicd"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodePipeline for service\
+        \ role"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:ResourceAccount: "938586302001"
+          Resource:
+          - "arn:aws:s3:::codepipeline-us-east-1-e87a75f28d28-44da-9c7e-395fc069506c"
+          Action:
+          - "s3:GetBucketVersioning"
+          - "s3:GetBucketAcl"
+          - "s3:GetBucketLocation"
+          Effect: "Allow"
+          Sid: "AllowS3BucketAccess"
+        - Condition:
+            StringEquals:
+              aws:ResourceAccount: "938586302001"
+          Resource:
+          - "arn:aws:s3:::codepipeline-us-east-1-e87a75f28d28-44da-9c7e-395fc069506c/*"
+          Action:
+          - "s3:PutObject"
+          - "s3:PutObjectAcl"
+          - "s3:GetObject"
+          - "s3:GetObjectVersion"
+          Effect: "Allow"
+          Sid: "AllowS3ObjectAccess"
+      Roles:
+      - Ref: "IAMRoleAWSCodePipelineServiceRoleuseast1nextworkdevopscicd"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCodePipelineCodeDeployuseast1nextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "CodePipeline-CodeDeploy-us-east-1-nextwork-devops-cicd"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodePipeline for CodeDeploy\
+        \ Action"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:codedeploy:*:938586302001:application:favournextwork-devops-cicd"
+          - "arn:aws:codedeploy:*:938586302001:deploymentgroup:favournextwork-devops-cicd/*"
+          Action:
+          - "codedeploy:CreateDeployment"
+          - "codedeploy:GetApplication"
+          - "codedeploy:GetDeployment"
+          - "codedeploy:RegisterApplicationRevision"
+          - "codedeploy:ListDeployments"
+          - "codedeploy:ListDeploymentGroups"
+          - "codedeploy:GetDeploymentGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:codedeploy:*:938586302001:deploymentconfig:CodeDeployDefault.AllAtOnce"
+          Action:
+          - "codedeploy:GetDeploymentConfig"
+          Effect: "Allow"
+        - Resource:
+          - "*"
+          Action:
+          - "codedeploy:ListDeploymentConfigs"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleAWSCodePipelineServiceRoleuseast1nextworkdevopscicd"
+      Users: []
+  S3BucketPolicyCodepipelineuseast1e87a75f28d2844da9c7e395fc069506c:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::BucketPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      Bucket:
+        Ref: "S3BucketCodepipelineuseast1e87a75f28d2844da9c7e395fc069506c"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringNotEquals:
+              s3:x-amz-server-side-encryption: "aws:kms"
+          Resource: "arn:aws:s3:::codepipeline-us-east-1-e87a75f28d28-44da-9c7e-395fc069506c/*"
+          Action: "s3:PutObject"
+          Effect: "Deny"
+          Principal: "*"
+          Sid: "DenyUnEncryptedObjectUploads"
+        - Condition:
+            Bool:
+              aws:SecureTransport: "false"
+          Resource: "arn:aws:s3:::codepipeline-us-east-1-e87a75f28d28-44da-9c7e-395fc069506c/*"
+          Action: "s3:*"
+          Effect: "Deny"
+          Principal: "*"
+          Sid: "DenyInsecureConnections"
+        Id: "SSEAndSSLPolicy"
+  IAMManagedPolicyPolicyserviceroleCodePipelineCodeBuilduseast1nextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "CodePipeline-CodeBuild-us-east-1-nextwork-devops-cicd"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodePipeline for CodeBuild\
+        \ Action"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:codebuild:*:938586302001:project/favour-devops-cicd"
+          Action:
+          - "codebuild:BatchGetBuilds"
+          - "codebuild:StartBuild"
+          - "codebuild:BatchGetBuildBatches"
+          - "codebuild:StartBuildBatch"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleAWSCodePipelineServiceRoleuseast1nextworkdevopscicd"
+      Users: []
+  IAMRoleEc2instancefavourcicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::938586302001:policy/Favour-codeartifact-policy"
+      MaxSessionDuration: 3600
+      RoleName: "ec2-instance-favour-cicd"
+      Description: "Allows EC2 instances to call AWS services on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ec2.amazonaws.com"
+  IAMRoleCodebuildfavourdevopscicdservicerole:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::938586302001:policy/Favour-codeartifact-policy"
+      - "arn:aws:iam::938586302001:policy/service-role/CodeBuildBasePolicy-favour-devops-cicd-us-east-1"
+      - "arn:aws:iam::938586302001:policy/service-role/CodeBuildCloudWatchLogsPolicy-favour-devops-cicd-us-east-1"
+      - "arn:aws:iam::938586302001:policy/service-role/CodeBuildCodeConnectionsSourceCredentialsPolicy-favour-devops-cicd-us-east-1-938586302001"
+      MaxSessionDuration: 3600
+      RoleName: "codebuild-favour-devops-cicd-service-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "codebuild.amazonaws.com"
+  CodeDeployApplicationFavournextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeDeploy::Application"
+    DeletionPolicy: "Delete"
+    Properties:
+      ApplicationName: "favournextwork-devops-cicd"
+      ComputePlatform: "Server"
+  IAMManagedPolicyPolicyserviceroleCodeBuildBasePolicyfavourdevopscicduseast1:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "CodeBuildBasePolicy-favour-devops-cicd-us-east-1"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodeBuild"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:logs:us-east-1:938586302001:log-group:/aws/codebuild/favour-devops-cicd"
+          - "arn:aws:logs:us-east-1:938586302001:log-group:/aws/codebuild/favour-devops-cicd:*"
+          Action:
+          - "logs:CreateLogGroup"
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:s3:::codepipeline-us-east-1-*"
+          Action:
+          - "s3:PutObject"
+          - "s3:GetObject"
+          - "s3:GetObjectVersion"
+          - "s3:GetBucketAcl"
+          - "s3:GetBucketLocation"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:s3:::favour-devops-cicd-yourname"
+          - "arn:aws:s3:::favour-devops-cicd-yourname/*"
+          Action:
+          - "s3:PutObject"
+          - "s3:GetBucketAcl"
+          - "s3:GetBucketLocation"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:codebuild:us-east-1:938586302001:report-group/favour-devops-cicd-*"
+          Action:
+          - "codebuild:CreateReportGroup"
+          - "codebuild:CreateReport"
+          - "codebuild:UpdateReport"
+          - "codebuild:BatchPutTestCases"
+          - "codebuild:BatchPutCodeCoverages"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleCodebuildfavourdevopscicdservicerole"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCodeBuildCodeConnectionsSourceCredentialsPolicyfavourdevopscicduseast1938586302001:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "CodeBuildCodeConnectionsSourceCredentialsPolicy-favour-devops-cicd-us-east-1-938586302001"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodeBuild"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:codestar-connections:us-east-1:938586302001:connection/020c65f4-3293-4627-84f1-17cf8685eb48"
+          - "arn:aws:codeconnections:us-east-1:938586302001:connection/020c65f4-3293-4627-84f1-17cf8685eb48"
+          Action:
+          - "codestar-connections:GetConnectionToken"
+          - "codestar-connections:GetConnection"
+          - "codeconnections:GetConnectionToken"
+          - "codeconnections:GetConnection"
+          - "codeconnections:UseConnection"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleCodebuildfavourdevopscicdservicerole"
+      Users: []
+  EC2Instance:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      PrivateIpAddress: "172.31.26.150"
+      InstanceInitiatedShutdownBehavior: "stop"
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-0e8ae436bb016efb5"
+          VolumeType: "gp3"
+          Iops: 3000
+          VolumeSize: 8
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: true
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      IamInstanceProfile:
+        Ref: "IAMInstanceProfileEc2instancefavourcicd"
+      SubnetId:
+        Ref: "EC2Subnet"
+      SecurityGroupIds:
+      - "sg-03f23cb2820502ffe"
+      EbsOptimized: false
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      VpcId: "vpc-0cc51cae6b79ee4bb"
+      State:
+        Code: "16"
+        Name: "running"
+      NetworkInterfaces:
+      - Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2Subnet"
+        SecondaryPrivateIpAddressCount: 0
+        NetworkInterfaceId:
+          Ref: "EC2NetworkInterface"
+        DeviceIndex: "0"
+      ImageId: "ami-08982f1c5bf93d976"
+      InstanceType: "t2.micro"
+      Monitoring: false
+      Tags:
+      - Value: "dev-instance-day7"
+        Key: "Name"
+      CreditSpecification:
+        CPUCredits: "standard"
+  S3BucketCodepipelineuseast1e87a75f28d2844da9c7e395fc069506c:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "codepipeline-us-east-1-e87a75f28d28-44da-9c7e-395fc069506c"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: false
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
+  EC2Volume:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Delete"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-0e8ae436bb016efb5"
+      VolumeType: "gp3"
+      Encrypted: false
+      Size: 8
+      AutoEnableIO: true
+      AvailabilityZone: "us-east-1c"
+      Throughput: 125
+      Iops: 3000
+      Tags: []
+  IAMInstanceProfileEc2instancefavourcicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::InstanceProfile"
+    DeletionPolicy: "Delete"
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: "IAMRoleEc2instancefavourcicd"
+      InstanceProfileName:
+        Ref: "IAMRoleEc2instancefavourcicd"
+  CodeArtifactRepositoryRepositoryfavourfavourdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeArtifact::Repository"
+    DeletionPolicy: "Delete"
+    Properties:
+      Upstreams:
+      - Fn::GetAtt:
+        - "CodeArtifactRepositoryRepositoryfavourmavencentralstore"
+        - "Name"
+      RepositoryName: "favour-devops-cicd"
+      Description: "Repository for Favour CI/CD artifacts."
+      DomainName:
+        Fn::GetAtt:
+        - "CodeArtifactDomainDomainfavour"
+        - "Name"
+  IAMManagedPolicyPolicyserviceroleCodePipelineCodeConnectionsuseast1nextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "CodePipeline-CodeConnections-us-east-1-nextwork-devops-cicd"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodePipeline for CodeConnections\
+        \ Action"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:codestar-connections:*:938586302001:connection/020c65f4-3293-4627-84f1-17cf8685eb48"
+          - "arn:aws:codeconnections:*:938586302001:connection/020c65f4-3293-4627-84f1-17cf8685eb48"
+          Action:
+          - "codeconnections:UseConnection"
+          - "codestar-connections:UseConnection"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleAWSCodePipelineServiceRoleuseast1nextworkdevopscicd"
+      Users: []
+  EC2VPC:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VPC"
+    DeletionPolicy: "Delete"
+    Properties:
+      CidrBlock: "172.31.0.0/16"
+      EnableDnsSupport: true
+      InstanceTenancy: "default"
+      EnableDnsHostnames: true
+      Tags: []
+  IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicyfavourdevopscicduseast1:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "CodeBuildCloudWatchLogsPolicy-favour-devops-cicd-us-east-1"
+      Path: "/service-role/"
+      Description: "Policy used in trust relationship with CodeBuild"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:logs:us-east-1:938586302001:log-group:/aws/codebuild/nextwork-devops-cicd"
+          - "arn:aws:logs:us-east-1:938586302001:log-group:/aws/codebuild/nextwork-devops-cicd:*"
+          Action:
+          - "logs:CreateLogGroup"
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleCodebuildfavourdevopscicdservicerole"
+      Users: []
+  EC2NetworkInterface:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Delete"
+    Properties:
+      Description: ""
+      PrivateIpAddress: "172.31.26.150"
+      SecondaryPrivateIpAddressCount: 0
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-03f23cb2820502ffe"
+      Ipv6Prefixes: []
+      SubnetId:
+        Ref: "EC2Subnet"
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Tags: []
+      PublicIpDnsNameOptions:
+        DnsHostnameType: "public-ipv4-dns-name"
+        PublicIpv4DnsName: "ec2-34-224-27-93.compute-1.amazonaws.com"
+  IAMManagedPolicyPolicyFavourcodeartifactpolicy:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "Favour-codeartifact-policy"
+      Path: "/"
+      Description: "Policy for EC2 instances to access CodeArtifact"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "codeartifact:GetAuthorizationToken"
+          - "codeartifact:GetRepositoryEndpoint"
+          - "codeartifact:ReadFromRepository"
+          Effect: "Allow"
+        - Condition:
+            StringEquals:
+              sts:AWSServiceName: "codeartifact.amazonaws.com"
+          Resource: "*"
+          Action: "sts:GetServiceBearerToken"
+          Effect: "Allow"
+      Roles:
+      - Ref: "IAMRoleEc2instancefavourcicd"
+      - Ref: "IAMRoleCodebuildfavourdevopscicdservicerole"
+      Users: []
